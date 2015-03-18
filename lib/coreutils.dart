@@ -16,8 +16,8 @@ const String VERSION = "1.0.0";
 ArgResults handleArguments(List<String> args, String tool, {bool fail(ArgResults result), void handle(ArgParser parser), String usage}) {
   var argp = new ArgParser();
 
-  argp.addFlag("help", abbr: "h", help: "Displays this Help Message");
-  argp.addFlag("version", abbr: "v", help: "Display Version");
+  argp.addFlag("help", abbr: "h", negatable: false, help: "Displays this Help Message");
+  argp.addFlag("version", abbr: "v", negatable: false, help: "Display Version");
 
   if (handle != null) {
     handle(argp);
