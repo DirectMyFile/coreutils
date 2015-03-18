@@ -12,6 +12,9 @@ class SystemCalls {
 
     libc.declare("""
     typedef unsigned int pid_t;
+    typedef unsigned int uid_t;
+    typedef unsigned int gid_t;
+    typedef unsigned int time_t;
 
     pid_t getppid(void);
     pid_t getpgrp(void);
@@ -21,7 +24,18 @@ class SystemCalls {
     pid_t setsid(void);
 
     void sync(void);
-    char ** environ;
+
+    uid_t getuid(void);
+    uid_t geteuid(void);
+    int seteuid(uid_t uid);
+    int setuid(uid_t uid);
+
+    gid_t getgid(void);
+    int setgid(gid_t gid);
+    gid_t getegid(void);
+    int setegid(gid_t gid);
+
+    time_t time(time_t *t);
     """);
   }
 
@@ -45,16 +59,12 @@ class SystemCalls {
     libc.invokeEx("sync");
   }
 
-  static int getParentPid() {
+  static int getParentProcessId() {
     return libc.invokeEx("getppid");
   }
 
   static int getProcessGroupId() {
     return libc.invokeEx("getpgid");
-  }
-
-  static List<String> getEnvironmentPairs() {
-    return libc.invokeEx("environ");
   }
 
   static void setProcessGroupId(int id) {
@@ -71,5 +81,17 @@ class SystemCalls {
 
   static int setSessionId() {
     return libc.invokeEx("setsid");
+  }
+
+  static int getUserId() {
+    return libc.invokeEx("getuid");
+  }
+
+  static void setUserId(int id) {
+    var r = libc.invokeEx("setuid", [id]);
+
+    if (r == -1) {
+      throw new Exception("Failed to setuid!");
+    }
   }
 }
