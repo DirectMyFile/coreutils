@@ -11,6 +11,9 @@ class SystemCalls {
     libc = DynamicLibrary.load(_getLibName(), types: types);
 
     libc.declare("""
+    typedef unsigned int pid_t;
+
+    pid_t getppid(void);
     void sync(void);
     """);
   }
@@ -33,5 +36,9 @@ class SystemCalls {
 
   static void sync() {
     libc.invokeEx("sync");
+  }
+
+  static int getParentPid() {
+    return libc.invokeEx("getppid");
   }
 }
