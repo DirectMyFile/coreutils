@@ -14,22 +14,46 @@ main(List<String> args) {
   var tt = FileSystemEntity.typeSync(tp);
 
   if (st == FileSystemEntityType.NOT_FOUND) {
-    print("ERROR: '${sp}' does not exist.");
+    print("ERROR: Source '${sp}' does not exist.");
     exit(1);
   }
 
-  if (st == FileSystemEntityType.DIRECTORY) {
-    print("ERROR: Directories are not supported yet.");
+  if (st == FileSystemEntityType.DIRECTORY && !results["recursive"]) {
+    print("ERROR: Source is a directory, but recursive copying is not enabled.");
+    exit(1);
   }
 
   var fp = tp;
 
-  if (st == FileSystemEntityType.DIRECTORY) {
-    fp = tp + pathlib.basename(sp);
+  if (!results["recursive"]) {
+    if (st == FileSystemEntityType.DIRECTORY) {
+      fp = tp + pathlib.basename(sp);
+    }
+
+    var sf = new File(sp);
+    var tf = new File(fp);
+
+    sf.copySync(tf.path);
+  } else {
+    var sd = new Directory(sp);
+    var td = new Directory(fp);
+
+    if (!td.parent.existsSync()) {
+      print("ERROR: Target directory's parent does not exist.");
+      exit(1);
+    }
+
+    if (!td.existsSync()) {
+      td.createSync();
+    }
+
+    for (var f in sd.listSync(recursive: true)) {
+      var p = td.path + f.path.replaceAll(sd.path, "");
+      if (f is File) {
+        f.copySync(p);
+      } else {
+        new Directory(p).createSync(recursive: true);
+      }
+    }
   }
-
-  var sf = new File(sp);
-  var tf = new File(fp);
-
-  sf.copySync(tf.path);
 }
