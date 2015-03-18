@@ -9,7 +9,7 @@ main(List<String> args) {
 
   List<int> bytes;
 
-  if (results.rest.isNotEmpty) {
+  if (results.rest.isNotEmpty && (results.rest.length == 1 ? results.rest.first != "-" : false)) {
     bytes = new File(results.rest.join(" ")).readAsBytesSync();
   } else {
     bytes = readStdin();
