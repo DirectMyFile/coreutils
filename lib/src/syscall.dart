@@ -21,6 +21,7 @@ class SystemCalls {
     pid_t setsid(void);
 
     void sync(void);
+    char ** environ;
     """);
   }
 
