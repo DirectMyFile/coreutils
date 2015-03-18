@@ -32,6 +32,6 @@ class SystemCalls {
   }
 
   static void sync() {
-    libc.invoke("sync");
+    libc.invokeEx("sync");
   }
 }
