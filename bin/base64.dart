@@ -16,9 +16,9 @@ main(List<String> args) {
   }
 
   if (results["decode"]) {
-    print(new String.fromCharCodes(decodeBase64(new String.fromCharCodes(bytes))));
+    stdout.write(new String.fromCharCodes(decodeBase64(new String.fromCharCodes(bytes))));
   } else {
-    print(encodeBase64(bytes));
+    stdout.write(encodeBase64(bytes));
   }
 
   exit(0);
