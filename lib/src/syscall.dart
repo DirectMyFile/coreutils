@@ -1,5 +1,12 @@
 part of coreutils;
 
+class ErrorNumbers {
+  static const int EPERM = 1;
+  static const int ENOENT = 2;
+  static const int EACCES = 13;
+  static const int EINVAL = 22;
+}
+
 class SystemCalls {
   static BinaryTypes types;
   static BinaryTypeHelper typeHelper;
@@ -15,6 +22,8 @@ class SystemCalls {
     typedef unsigned int uid_t;
     typedef unsigned int gid_t;
     typedef unsigned int time_t;
+
+    int errno;
 
     pid_t getppid(void);
     pid_t getpgrp(void);
@@ -36,6 +45,7 @@ class SystemCalls {
     int setegid(gid_t gid);
 
     time_t time(time_t *t);
+    double sqrt(double x);
     """);
   }
 
@@ -85,6 +95,10 @@ class SystemCalls {
 
   static int getUserId() {
     return libc.invokeEx("getuid");
+  }
+
+  static int getErrorNumber() {
+    return Unsafe.readIntPtr(0, libc.symbol("errno"));
   }
 
   static void setUserId(int id) {

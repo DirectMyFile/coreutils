@@ -6,6 +6,7 @@ import "package:args/args.dart";
 import "package:crypto/crypto.dart";
 
 import "package:binary_interop/binary_interop.dart";
+import "package:unsafe_extension/unsafe_extension.dart";
 
 export "package:args/args.dart";
 
