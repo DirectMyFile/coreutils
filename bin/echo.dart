@@ -36,26 +36,6 @@ final Map<String, String> _decodeTable = const {
   't': '\t'
 };
 
-final Map<String, String> _encodeTable = const {
-  '\\': '\\',
-  '/': '/',
-  '"': '"',
-  '\b': 'b',
-  '\f': 'f',
-  '\n': 'n',
-  '\r': 'r',
-  '\t': 't'
-};
-
-String _escapeUnicode(String input) {
-  return input.replaceAllMapped(_unicodeEscape, (match) {
-    var escape = match[0];
-    var end = "0000" + escape.codeUnitAt(0).toRadixString(16);
-    end = end.substring(end.length - 4);
-    return "\\u" + end;
-  });
-}
-
 String _unescape(String input) {
   for (var code in _decodeTable.keys) {
     if (input.contains("\\${code}")) {
@@ -74,18 +54,6 @@ String _unescape(String input) {
       return new String.fromCharCode(value);
     });
   }
-
-  return input;
-}
-
-String _escape(String input) {
-  if (_encodeTable.keys.any((it) => input.contains(it))) {
-    for (var it in _encodeTable.keys) {
-      input = input.replaceAll(it, "\\" + _encodeTable[it]);
-    }
-  }
-
-  input = _escapeUnicode(input);
 
   return input;
 }
