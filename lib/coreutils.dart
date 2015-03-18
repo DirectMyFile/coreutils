@@ -84,3 +84,19 @@ List<int> readStdin() {
 void init() {
   SystemCalls.init();
 }
+
+List<FileSystemEntity> walkTreeBottomUp(Directory dir) {
+  var list = [];
+
+  var items = dir.listSync();
+  for (var item in items) {
+    if (item is Directory) {
+      list.addAll(walkTreeBottomUp(item));
+      list.add(item);
+    } else {
+      list.add(item);
+    }
+  }
+
+  return list;
+}
