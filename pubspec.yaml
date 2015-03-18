@@ -1,0 +1,5 @@
+name: coreutils
+description: GNU Coreutils in Dart
+dependencies:
+  args: ">=0.13.0 <0.14.0"
+  crypto: ">=0.9.0 <0.12.0"
