@@ -13,7 +13,7 @@ part "src/syscall.dart";
 
 const String VERSION = "1.0.0";
 
-ArgResults handleArguments(List<String> args, String tool, {void handle(ArgParser parser), String usage}) {
+ArgResults handleArguments(List<String> args, String tool, {bool fail(ArgResults result), void handle(ArgParser parser), String usage}) {
   var argp = new ArgParser();
 
   argp.addFlag("help", abbr: "h", help: "Displays this Help Message");
@@ -41,6 +41,10 @@ ArgResults handleArguments(List<String> args, String tool, {void handle(ArgParse
   }
 
   if (result["help"]) {
+    printHelp();
+  }
+
+  if (fail != null && fail(result)) {
     printHelp();
   }
 
