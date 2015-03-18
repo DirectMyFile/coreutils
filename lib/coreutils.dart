@@ -1,9 +1,15 @@
+library coreutils;
+
 import "dart:io";
 
 import "package:args/args.dart";
 import "package:crypto/crypto.dart";
 
+import "package:binary_interop/binary_interop.dart";
+
 export "package:args/args.dart";
+
+part "src/syscall.dart";
 
 const String VERSION = "1.0.0";
 
@@ -68,4 +74,8 @@ List<int> readStdin() {
   }
 
   return bytes;
+}
+
+void init() {
+  SystemCalls.init();
 }
