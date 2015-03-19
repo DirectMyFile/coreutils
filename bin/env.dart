@@ -2,8 +2,8 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args, [String name = "env"]) async {
-  var opts = handleArguments(args, name);
+main(List<String> args) async {
+  var opts = handleArguments(args, "env");
   var eparts = opts.rest.takeWhile((it) => it.contains("=")).toList();
 
   var hasCommand = opts.rest.length != eparts.length && opts.rest.isNotEmpty;

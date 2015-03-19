@@ -5,7 +5,7 @@ import "package:coreutils/coreutils.dart";
 main(List<String> args) {
   init();
 
-  var result = handleArguments(args, "exit");
+  var opts = handleArguments(args, "exit");
 
   try {
     Process.killPid(SystemCalls.getParentProcessId());
