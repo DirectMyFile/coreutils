@@ -10,6 +10,7 @@ import "package:binary_interop/binary_interop.dart";
 export "package:args/args.dart";
 
 part "src/syscall.dart";
+part "src/format.dart";
 
 const String VERSION = "1.0.0";
 
@@ -98,4 +99,45 @@ List<FileSystemEntity> walkTreeBottomUp(Directory dir) {
   }
 
   return list;
+}
+
+String formatDate(DateTime d, String format) {
+  String tn(int n) {
+    if (n < 9) {
+      return "0${n}";
+    } else {
+      return n.toString();
+    }
+  }
+
+  return formatString(format, {
+    "H": () => tn(d.hour),
+    "I": () => ((d.hour + 11) % 12 + 1).toString(),
+    "k": () => d.hour.toString().length == 1 ? " ${d.hour}" : d.hour.toString(),
+    "l": () {
+      var x = ((d.hour + 11) % 12 + 1).toString();
+
+      if (x.length == 1) {
+        x = " ${x}";
+      }
+
+      return x;
+    },
+    "M": () => tn(d.minute),
+    "P": () => d.hour >= 12 ? "PM" : "AM",
+    "r": () {
+      var x = tn(((d.hour + 11) % 12 + 1));
+      var y = tn(d.minute);
+      var z = tn(d.second);
+      var a = d.hour >= 12 ? "PM" : "AM";
+
+      return "${x}:${y}:${z} ${a}";
+    },
+    "R": () {
+      return "${tn(d.hour)}:${tn(d.minute)}";
+    },
+    "s": () => d.millisecondsSinceEpoch.toString(),
+    "S": () => d.second.toString(),
+    "T": () => "${tn(d.hour)}:${tn(d.minute)}:${tn(d.second)}"
+  });
 }
