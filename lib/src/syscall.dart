@@ -46,6 +46,7 @@ class SystemCalls {
 
     time_t time(time_t *t);
     double sqrt(double x);
+    char *getlogin(void);
     """);
   }
 
@@ -85,6 +86,10 @@ class SystemCalls {
     }
   }
 
+  static String getUserName() {
+    return typeHelper.readString(libc.invokeEx("getlogin"));
+  }
+
   static int getSessionId(int pid) {
     return libc.invokeEx("getsid", [pid]);
   }
@@ -98,7 +103,7 @@ class SystemCalls {
   }
 
   static int getErrorNumber() {
-    return Unsafe.readIntPtr(0, libc.symbol("errno"));
+    return INT_T.extern(libc.symbol("errno")).value;
   }
 
   static void setUserId(int id) {
@@ -108,4 +113,6 @@ class SystemCalls {
       throw new Exception("Failed to setuid!");
     }
   }
+
+  static final INT_T = types["int"];
 }
