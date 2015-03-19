@@ -62,6 +62,7 @@ class SystemCalls {
     };
 
     int getloadavg(double loadavg[], int nelem);
+    char **environ;
     """;
 
     if (Platform.isLinux || Platform.isAndroid) {
@@ -77,6 +78,8 @@ class SystemCalls {
       int sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen);
       """;
     }
+
+    libc.declare(header);
   }
 
   static String _getLibName() {
@@ -134,6 +137,18 @@ class SystemCalls {
       throw new Exception("Failed to get load average.");
     }
     return c.value.map((double it) => it);
+  }
+
+  static List<String> getEnvironment() {
+    BinaryData data = types["char**"].extern(libc.symbol("environ"));
+    var x = [];
+    var l;
+    var i = 0;
+    while (!(l = data.getElementValue(i)).isNullPtr) {
+      x.add(typeHelper.readString(l));
+      i++;
+    }
+    return x;
   }
 
   static String getGroupName() {
