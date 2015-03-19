@@ -7,4 +7,6 @@ void main() {
   print("Error Number: ${SystemCalls.getErrorNumber()}");
   print("User Name: ${SystemCalls.getUserName()}");
   print("Group Name: ${SystemCalls.getGroupName()}");
+  print("Load Averages: ${SystemCalls.getLoadAverage()}");
+  print("Uptime: ${SystemCalls.getUptime()}");
 }

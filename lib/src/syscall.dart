@@ -17,7 +17,7 @@ class SystemCalls {
     typeHelper = new BinaryTypeHelper(types);
     libc = DynamicLibrary.load(_getLibName(), types: types);
 
-    libc.declare("""
+    var header = """
     typedef unsigned int pid_t;
     typedef unsigned int uid_t;
     typedef unsigned int gid_t;
@@ -60,7 +60,23 @@ class SystemCalls {
       gid_t   gr_gid;
       char  **gr_mem;
     };
-    """);
+
+    int getloadavg(double loadavg[], int nelem);
+    """;
+
+    if (Platform.isLinux || Platform.isAndroid) {
+      header += """
+      int sysinfo(struct sysinfo *info);
+
+      struct sysinfo {
+        long uptime;
+      };
+      """;
+    } else {
+      header += """
+      int sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen);
+      """;
+    }
   }
 
   static String _getLibName() {
@@ -111,8 +127,38 @@ class SystemCalls {
     return typeHelper.readString(c.value["gr_name"]);
   }
 
+  static List<double> getLoadAverage() {
+    var c = types["double"].array(3).alloc();
+    var result = libc.invokeEx("getloadavg", [c, 3]);
+    if (result == -1) {
+      throw new Exception("Failed to get load average.");
+    }
+    return c.value.map((double it) => it);
+  }
+
   static String getGroupName() {
     return getGroupNameForId(getGroupId());
+  }
+
+  static int getUptime() {
+    if (Platform.isLinux || Platform.isAndroid) {
+      return getSysInfo().value["uptime"];
+    } else {
+      throw new Exception("Uptime is not yet supported.");
+    }
+  }
+
+  static BinaryData getSysInfo() {
+    if (Platform.isMacOS) {
+      throw new Exception("getSysInfo() is not supported on Mac.");
+    }
+
+    var instance = types["sysinfo"].alloc();
+    var result = libc.invokeEx("getsysinfo", [instance]);
+    if (result == -1) {
+      throw new Exception("Failed to get sysinfo.");
+    }
+    return instance;
   }
 
   static int getSessionId(int pid) {
@@ -145,3 +191,4 @@ class SystemCalls {
 
   static final INT_T = types["int"];
 }
+
