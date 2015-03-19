@@ -4,12 +4,12 @@ import "package:coreutils/coreutils.dart";
 
 main(List<String> args) async {
   var opts = handleArguments(args, "env");
-  var eparts = opts.rest.takeWhile((it) => it.contains("=")).toList();
+  var parts = opts.rest.takeWhile((it) => it.contains("=")).toList();
 
-  var hasCommand = opts.rest.length != eparts.length && opts.rest.isNotEmpty;
+  var hasCommand = opts.rest.length != parts.length && opts.rest.isNotEmpty;
 
   var env = new Map.from(Platform.environment);
-  for (var x in eparts) {
+  for (var x in parts) {
     var name = x.substring(0, x.indexOf("="));
     var value = x.substring(x.indexOf("=") + 1);
 
@@ -20,7 +20,7 @@ main(List<String> args) async {
     var out = env.keys.map((it) => "${it}=${env[it]}").join("\n");
     print(out);
   } else {
-    var cmd = opts.rest.sublist(eparts.length);
+    var cmd = opts.rest.sublist(parts.length);
     var exe = cmd.first;
     cmd = cmd.sublist(1);
 
