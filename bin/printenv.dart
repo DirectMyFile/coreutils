@@ -10,7 +10,6 @@ void main(List<String> args) {
     var out = env.keys.map((it) => "${it}=${env[it]}").join("\n");
     print(out);
   } else {
-    var x = 0;
     opts.rest.forEach((x) {
       if (!env.containsKey(x)) {
         x = 1;

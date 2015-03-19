@@ -11,7 +11,6 @@ main(List<String> args) {
   var sp = results.rest[0];
   var tp = results.rest[1];
   var st = FileSystemEntity.typeSync(sp);
-  var tt = FileSystemEntity.typeSync(tp);
 
   if (st == FileSystemEntityType.NOT_FOUND) {
     print("ERROR: Source '${sp}' does not exist.");

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-source $(dirname ${0})/gen_snapshots.sh
+TOOLS=$(find bin -type f | awk '{gsub(".dart", "");gsub("bin/", "");print}')
 
 [ -d scripts ] && rm -rf scripts
 mkdir scripts
 
 for TOOL in ${TOOLS}
 do
-  S=$(pwd)/snapshots/${TOOL}.snapshot
+  S=$(pwd)/bin/${TOOL}.dart
   F=scripts/${TOOL}
-  echo -e "#!/usr/bin/env bash\ndart ${S}" > ${F}
+  echo -e "#!/usr/bin/env bash\ndart ${S} \${@}" > ${F}
   chmod +x ${F}
 done
