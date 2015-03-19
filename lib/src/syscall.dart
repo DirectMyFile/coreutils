@@ -47,6 +47,19 @@ class SystemCalls {
     time_t time(time_t *t);
     double sqrt(double x);
     char *getlogin(void);
+
+    struct group *getgrnam(const char *name);
+    struct group *getgrgid(gid_t gid);
+    int getgrnam_r(const char *name, struct group *grp, char *buf, size_t buflen, struct group **result);
+
+    int getgrgid_r(gid_t gid, struct group *grp, char *buf, size_t buflen, struct group **result);
+
+    struct group {
+      char   *gr_name;
+      char   *gr_passwd;
+      gid_t   gr_gid;
+      char  **gr_mem;
+    };
     """);
   }
 
@@ -90,6 +103,18 @@ class SystemCalls {
     return typeHelper.readString(libc.invokeEx("getlogin"));
   }
 
+  static String getGroupNameForId(int id) {
+    BinaryData c = libc.invokeEx("getgrgid", [id]);
+    if (c.isNullPtr) {
+      throw new Exception("Failed to get group name!");
+    }
+    return typeHelper.readString(c.value["gr_name"]);
+  }
+
+  static String getGroupName() {
+    return getGroupNameForId(getGroupId());
+  }
+
   static int getSessionId(int pid) {
     return libc.invokeEx("getsid", [pid]);
   }
@@ -100,6 +125,10 @@ class SystemCalls {
 
   static int getUserId() {
     return libc.invokeEx("getuid");
+  }
+
+  static int getGroupId() {
+    return libc.invokeEx("getgid");
   }
 
   static int getErrorNumber() {
