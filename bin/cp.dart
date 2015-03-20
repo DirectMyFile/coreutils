@@ -4,7 +4,7 @@ import "package:coreutils/coreutils.dart";
 import "package:path/path.dart" as pathlib;
 
 main(List<String> args) {
-  var results = handleArguments(args, "cp", usage: "<source> <destination>", handle: (ArgParser parser) {
+  var results = handleArguments(args, "cp", usage: "<sources> <destination>", handle: (ArgParser parser) {
     parser.addFlag("recursive", abbr: "R", help: "Recursive Copy");
   }, fail: (result) => result.rest.length < 2);
 
