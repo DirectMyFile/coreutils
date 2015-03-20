@@ -1,0 +1,105 @@
+# Coreutils for Dart
+
+An implementation of the GNU Coreutils in Dart.
+
+## Status
+
+- [x] arch
+- [x] base64
+- [x] basename
+- [x] cat
+- [ ] chcon
+- [ ] chgrp
+- [ ] chown
+- [ ] chmod
+- [ ] chroot
+- [ ] cksum
+- [ ] comm
+- [x] cp
+- [ ] csplit
+- [ ] cut
+- [ ] date
+- [ ] dd
+- [ ] df
+- [ ] dir
+- [ ] dircolors
+- [ ] dirname
+- [ ] du
+- [x] echo
+- [x] env
+- [x] expand
+- [ ] expr
+- [ ] factor
+- [x] false
+- [ ] fmt
+- [ ] fold
+- [ ] groups
+- [x] head
+- [ ] hostid
+- [ ] id
+- [ ] install
+- [ ] join
+- [ ] link
+- [ ] ln
+- [x] logname
+- [ ] ls
+- [ ] md5sum
+- [x] mkdir
+- [ ] mkfifo
+- [ ] mknod
+- [ ] mktemp
+- [ ] mv
+- [ ] nice
+- [ ] nohup
+- [ ] nl
+- [ ] od
+- [ ] paste
+- [ ] pathchk
+- [ ] pinky
+- [ ] ptx
+- [ ] pr
+- [x] printenv
+- [ ] printf
+- [x] pwd
+- [ ] readlink
+- [x] rm
+- [ ] rmdir
+- [ ] runcon
+- [x] seq
+- [ ] sha1sum
+- [ ] sha224sum
+- [ ] sha256sum
+- [ ] sha384sum
+- [ ] sha512sum
+- [ ] shred
+- [ ] shuf
+- [x] sleep
+- [x] sort
+- [ ] split
+- [ ] stat
+- [ ] stty
+- [ ] su
+- [ ] sum
+- [x] sync
+- [ ] tac
+- [ ] tail
+- [x] tee
+- [x] touch
+- [ ] test
+- [ ] timeout
+- [ ] truncate
+- [ ] tr
+- [x] true
+- [ ] tty
+- [ ] tsort
+- [x] unexpand
+- [x] uniq
+- [ ] uname
+- [ ] unlink
+- [ ] uptime
+- [ ] users
+- [ ] vdir
+- [ ] wc
+- [ ] who
+- [x] whoami
+- [x] yes
