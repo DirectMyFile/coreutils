@@ -95,7 +95,7 @@ An implementation of the GNU Coreutils in Dart.
 - [x] unexpand
 - [x] uniq
 - [ ] uname
-- [ ] unlink
+- [x] unlink
 - [ ] uptime
 - [ ] users
 - [ ] vdir
