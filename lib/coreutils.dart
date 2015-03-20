@@ -45,13 +45,13 @@ ArgResults handleArguments(List<String> args, String tool, {bool fail(ArgResults
     printHelp();
   }
 
-  if (fail != null && fail(result)) {
-    printHelp();
-  }
-
   if (result["version"]) {
     print("${tool} v${VERSION}");
     exit(0);
+  }
+
+  if (fail != null && fail(result)) {
+    printHelp();
   }
 
   return result;
