@@ -63,7 +63,7 @@ An implementation of the GNU Coreutils in Dart.
 - [x] pwd
 - [ ] readlink
 - [x] rm
-- [ ] rmdir
+- [x] rmdir
 - [ ] runcon
 - [x] seq
 - [ ] sha1sum
