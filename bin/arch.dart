@@ -10,4 +10,3 @@ main(List<String> args) {
 String getSystemArch() {
   return SysInfo.kernelArchitecture;
 }
-
