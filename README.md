@@ -40,7 +40,7 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] install
 - [ ] join
 - [ ] link
-- [ ] ln
+- [x] ln
 - [x] logname
 - [ ] ls
 - [ ] md5sum
