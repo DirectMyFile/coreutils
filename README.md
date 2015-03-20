@@ -23,7 +23,7 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] df
 - [ ] dir
 - [ ] dircolors
-- [ ] dirname
+- [x] dirname
 - [ ] du
 - [x] echo
 - [x] env
