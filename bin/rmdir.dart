@@ -3,8 +3,8 @@ import "dart:io";
 import "package:coreutils/coreutils.dart";
 
 main(List<String> args) {
-  var result = handleArguments(args, "mkdir", usage: "<path>", handle: (parser) {
-    parser.addFlag("parents", negatable: false, abbr: "p", help: "Create Parent Directories");
+  var result = handleArguments(args, "rmdir", usage: "<path>", handle: (parser) {
+    parser.addFlag("parents", negatable: false, abbr: "p", help: "Delete Parent Directories");
   }, fail: (result) => result.rest.isEmpty);
 
   var recursive = result["parents"];
