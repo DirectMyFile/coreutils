@@ -74,9 +74,6 @@ class SystemCalls {
       };
       """;
     } else {
-      header += """
-      int sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen);
-      """;
     }
 
     libc.declare(header);
@@ -159,7 +156,9 @@ class SystemCalls {
     if (Platform.isLinux || Platform.isAndroid) {
       return getSysInfo().value["uptime"];
     } else {
-      throw new Exception("Uptime is not yet supported.");
+      var out = Process.runSync("sysctl", ["-n", "kern.boottime"]).stdout;
+      var match = new RegExp(r"sec \= (\d+)").firstMatch(out);
+      return (new DateTime.now().millisecondsSinceEpoch ~/ 1000) - int.parse(match[1]);
     }
   }
 

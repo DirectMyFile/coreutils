@@ -8,5 +8,5 @@ void main() {
   print("User Name: ${SystemCalls.getUserName()}");
   print("Group Name: ${SystemCalls.getGroupName()}");
   print("Load Averages: ${SystemCalls.getLoadAverage()}");
-  print("Environment: ${SystemCalls.getEnvironment()}");
+  print("Uptime: ${SystemCalls.getUptime()}");
 }
