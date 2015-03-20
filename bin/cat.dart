@@ -1,24 +1,39 @@
+import "dart:async";
 import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
-  var results = handleArguments(args, "cat", handle: (ArgParser parser) {});
-  var paths = results.rest;
+main(List<String> args) async {
+  var opts = handleArguments(args, "cat", handle: (ArgParser parser) {
+    parser.addFlag("number", abbr: "n", help: "Display Line Numbers", negatable: false);
+  });
+
+  var paths = opts.rest;
 
   if (paths.isEmpty) {
     paths = ["-"];
   }
 
   for (var path in paths) {
-    List<int> bytes;
+    Stream<List<int>> stream;
 
-    if (path != "-") {
-      bytes = new File(path).readAsBytesSync();
+    if (path == "-") {
+      stream = stdin;
     } else {
-      bytes = readStdin();
+      stream = new File(path).openRead();
     }
 
-    stdout.write(new String.fromCharCodes(bytes));
+    var line = 0;
+
+    await stream.listen((data) {
+      if (opts["number"] && data.last == newline) {
+        line++;
+        stdout.write("     ${line} ");
+      }
+
+      stdout.add(data);
+    });
   }
 }
+
+int newline = "\n".codeUnitAt(0);
