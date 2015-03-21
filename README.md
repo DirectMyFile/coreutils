@@ -90,7 +90,7 @@ An implementation of the GNU Coreutils (with added extras) in Dart.
 - [ ] stty
 - [ ] sum
 - [x] sync
-- [ ] tac
+- [x] tac
 - [ ] tail
 - [x] tee
 - [ ] test

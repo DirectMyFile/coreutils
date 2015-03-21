@@ -32,7 +32,7 @@ main(List<String> args) async {
       }
 
       stdout.add(data);
-    });
+    }).asFuture();
   }
 }
 
