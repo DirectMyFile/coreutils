@@ -63,6 +63,7 @@ class SystemCalls {
 
     int getloadavg(double loadavg[], int nelem);
     char **environ;
+    char *ttyname(int fd);
     """;
 
     if (Platform.isLinux || Platform.isAndroid) {
@@ -204,5 +205,14 @@ class SystemCalls {
   }
 
   static final INT_T = types["int"];
+
+  static String getTtyName() {
+    var x = libc.invokeEx("ttyname", [0]);
+    if (x.isNullPtr) {
+      return null;
+    } else {
+      return typeHelper.readString(x);
+    }
+  }
 }
 

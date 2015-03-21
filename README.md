@@ -90,7 +90,7 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] truncate
 - [ ] tr
 - [x] true
-- [ ] tty
+- [x] tty
 - [ ] tsort
 - [x] unexpand
 - [x] uniq
