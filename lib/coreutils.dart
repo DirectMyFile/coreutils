@@ -17,6 +17,7 @@ part "src/dates.dart";
 part "src/files.dart";
 part "src/io.dart";
 part "src/main.dart";
+part "src/users.dart";
 
 const String VERSION = "1.0.0";
 String toolName;
