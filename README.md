@@ -1,17 +1,22 @@
 # Coreutils for Dart
 
-An implementation of the GNU Coreutils in Dart.
+An implementation of the GNU Coreutils (with added extras) in Dart.
 
-## Status
+## Added Coreutils
 
 - [x] arch
+- [x] exit
+
+## Original Coreutils
+
+- [ ] [
 - [x] base64
 - [x] basename
 - [x] cat
 - [ ] chcon
 - [ ] chgrp
-- [ ] chown
 - [ ] chmod
+- [ ] chown
 - [ ] chroot
 - [ ] cksum
 - [ ] comm
@@ -39,6 +44,7 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] id
 - [ ] install
 - [ ] join
+- [ ] kill
 - [ ] link
 - [x] ln
 - [x] logname
@@ -50,18 +56,21 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] mktemp
 - [ ] mv
 - [ ] nice
-- [ ] nohup
 - [ ] nl
+- [ ] nohup
+- [ ] nproc
+- [ ] numfmt
 - [ ] od
 - [ ] paste
 - [ ] pathchk
 - [ ] pinky
-- [ ] ptx
 - [ ] pr
 - [x] printenv
 - [ ] printf
+- [ ] ptx
 - [x] pwd
 - [ ] readlink
+- [ ] realpath
 - [x] rm
 - [x] rmdir
 - [ ] runcon
@@ -74,27 +83,27 @@ An implementation of the GNU Coreutils in Dart.
 - [ ] shred
 - [ ] shuf
 - [x] sleep
-- [x] sort
+- [ ] sort
 - [ ] split
 - [ ] stat
+- [ ] stdbuf
 - [ ] stty
-- [ ] su
 - [ ] sum
 - [x] sync
 - [ ] tac
 - [ ] tail
 - [x] tee
-- [x] touch
 - [ ] test
 - [ ] timeout
-- [ ] truncate
+- [x] touch
 - [ ] tr
 - [x] true
-- [x] tty
+- [ ] truncate
 - [ ] tsort
+- [x] tty
+- [ ] uname
 - [x] unexpand
 - [x] uniq
-- [ ] uname
 - [x] unlink
 - [ ] uptime
 - [ ] users
