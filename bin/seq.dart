@@ -32,8 +32,7 @@ int getSeqNumber(String str) {
   var d = double.parse(str, (source) => null);
 
   if (d == null) {
-    print("ERROR: Invalid Number: ${str}");
-    exit(1);
+    error("Invalid Number: ${str}");
   }
 
   return d.toInt();
