@@ -1,6 +1,8 @@
 library coreutils;
 
+import "dart:async";
 import "dart:io";
+import "dart:io" as io;
 
 import "package:args/args.dart";
 import "package:crypto/crypto.dart";
@@ -15,6 +17,7 @@ part "src/format.dart";
 const String VERSION = "1.0.0";
 
 ArgResults handleArguments(List<String> args, String tool, {bool fail(ArgResults result), void handle(ArgParser parser), String usage}) {
+  toolName = tool;
   var argp = new ArgParser();
 
   argp.addFlag("help", abbr: "h", negatable: false, help: "Displays this Help Message");
@@ -69,29 +72,23 @@ String asHex(List<int> bytes) {
   return CryptoUtils.bytesToHex(bytes);
 }
 
-List<int> readStdin() {
-  var bytes = [];
+Future<List<int>> readStdin() async {
+  var file = new File("/dev/stdin");
 
-  int b;
-
-  while ((b = stdin.readByteSync()) != -1) {
-    bytes.add(b);
-  }
-
-  return bytes;
+  return await file.readAsBytes();
 }
 
 void init() {
   SystemCalls.init();
 }
 
-List<FileSystemEntity> walkTreeBottomUp(Directory dir) {
+Future<List<FileSystemEntity>> walkTreeBottomUp(Directory dir) async {
   var list = [];
 
-  var items = dir.listSync();
+  var items = await dir.list().toList();
   for (var item in items) {
     if (item is Directory) {
-      list.addAll(walkTreeBottomUp(item));
+      list.addAll(await walkTreeBottomUp(item));
       list.add(item);
     } else {
       list.add(item);
@@ -350,3 +347,18 @@ int _getPermissionBitIndex(FilePermission permission, FilePermissionRole role) {
     default: return (role.index * 3) + permission.index;
   }
 }
+
+class IOUtils {
+  static void exit(int code) {
+    io.exit(code);
+  }
+}
+
+void error(String msg, {bool exit: true, int exitCode: 1}) {
+  print("ERROR: ${msg}");
+  if (exit) {
+    IOUtils.exit(exitCode);
+  }
+}
+
+String toolName;

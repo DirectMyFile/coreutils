@@ -3,31 +3,29 @@ import "dart:io";
 import "package:coreutils/coreutils.dart";
 import "package:path/path.dart" as pathlib;
 
-main(List<String> args) {
-  var results = handleArguments(args, "cp", usage: "<sources> <destination>", handle: (ArgParser parser) {
+main(List<String> args) async {
+  var opts = handleArguments(args, "cp", usage: "<sources> <destination>", handle: (ArgParser parser) {
     parser.addFlag("recursive", abbr: "R", help: "Recursive Copy");
   }, fail: (result) => result.rest.length < 2);
 
-  var tp = results.rest.last;
-  var tt = FileSystemEntity.typeSync(tp);
+  var tp = opts.rest.last;
+  var tt = await FileSystemEntity.type(tp);
 
-  var sources = results.rest.sublist(0, results.rest.length - 1);
+  var sources = opts.rest.sublist(0, opts.rest.length - 1);
   for (var sp in sources) {
-    var st = FileSystemEntity.typeSync(sp);
+    var st = await FileSystemEntity.type(sp);
 
     if (st == FileSystemEntityType.NOT_FOUND) {
-      print("ERROR: Source '${sp}' does not exist.");
-      exit(1);
+      error("Source '${sp}' does not exist.");
     }
 
-    if (st == FileSystemEntityType.DIRECTORY && !results["recursive"]) {
-      print("ERROR: Source is a directory, but recursive copying is not enabled.");
-      exit(1);
+    if (st == FileSystemEntityType.DIRECTORY && !opts["recursive"]) {
+      error("Source is a directory, but recursive copying is not enabled.");
     }
 
     var fp = tp;
 
-    if (!results["recursive"]) {
+    if (!opts["recursive"]) {
       if (tt == FileSystemEntityType.DIRECTORY) {
         fp = tp + pathlib.basename(sp);
       }
@@ -41,20 +39,19 @@ main(List<String> args) {
       var td = new Directory(fp);
 
       if (!td.parent.existsSync()) {
-        print("ERROR: Target directory's parent does not exist.");
-        exit(1);
+        error("Target directory's parent does not exist.");
       }
 
-      if (!td.existsSync()) {
-        td.createSync();
+      if (!(await td.exists())) {
+        await td.create();
       }
 
       for (var f in sd.listSync(recursive: true)) {
         var p = td.path + f.path.replaceAll(sd.path, "");
         if (f is File) {
-          f.copySync(p);
+          await f.copy(p);
         } else {
-          new Directory(p).createSync(recursive: true);
+          await new Directory(p).create(recursive: true);
         }
       }
     }

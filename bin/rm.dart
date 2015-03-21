@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var opts = handleArguments(args, "rm", handle: (ArgParser parser) {
     parser.addFlag("recursive", abbr: "r", help: "Recursive Remove", negatable: false);
     parser.addFlag("force", abbr: "f", help: "Ignore Bad Arguments", negatable: false);
@@ -13,16 +13,14 @@ main(List<String> args) {
 
   for (var p in opts.rest) {
     if (p == "/" && opts["preserve-root"]) {
-      print("ERROR: You can't remove the root directory because you asked to preserve the root.");
-      exit(1);
+      error("You can't remove the root directory because you asked to preserve the root.");
     }
 
-    var t = FileSystemEntity.typeSync(p);
+    var t = await FileSystemEntity.type(p);
 
     if (t == FileSystemEntityType.NOT_FOUND) {
       if (!opts["force"]) {
-        print("ERROR: '${p}' does not exist.");
-        exit(1);
+        error("'${p}' does not exist.");
       }
     } else {
       if (t == FileSystemEntityType.DIRECTORY) {
@@ -33,12 +31,15 @@ main(List<String> args) {
     }
 
     for (var entity in entities) {
-      if (entity is Directory && !opts["recursive"] && entity.listSync().isNotEmpty) {
-        print("ERROR: Failed to remove '${entity.path}': Directory not empty.");
-        continue;
+      if (entity is Directory && !opts["recursive"]) {
+        var children = await (entity as Directory).list().toList();
+        if (children.isNotEmpty) {
+          error("Failed to remove '${entity.path}': Directory not empty.", exit: false);
+          continue;
+        }
       }
 
-      entity.deleteSync(recursive: opts["recursive"]);
+      await entity.delete(recursive: opts["recursive"]);
     }
   }
 }

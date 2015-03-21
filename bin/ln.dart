@@ -2,14 +2,14 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var opts = handleArguments(args, "ln", usage: "<source> <target>", handle: (parser) {
     parser.addFlag("symbolic", abbr: "s", help: "Make Symbolic Links", negatable: false);
     parser.addFlag("force", abbr: "f", help: "Force Creation", negatable: false);
   }, fail: (result) => result.rest.length != 2 || !result.options.any((it) => ["symbolic"].contains(it)));
 
   if (opts["symbolic"]) {
-    var type = FileSystemEntity.typeSync(opts.rest[0]);
+    var type = await FileSystemEntity.type(opts.rest[0]);
     if (type == FileSystemEntityType.NOT_FOUND) {
       print("ERROR: Source '${opts.rest[0]}' does not exist.");
       exit(1);
@@ -23,9 +23,9 @@ main(List<String> args) {
         exit(1);
       }
 
-      link.deleteSync();
+      await link.delete();
     }
 
-    link.createSync(from.path);
+    await link.create(from.path);
   }
 }

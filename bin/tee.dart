@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-void main(List<String> args) {
+main(List<String> args) async {
   var opts = handleArguments(args, "tee", usage: "[FILE]", handle: (argp) {
     argp.addFlag("append", abbr: "a", help: "Append to the File");
   });
@@ -18,29 +18,29 @@ void main(List<String> args) {
   files.add(new File("/dev/stdout"));
 
   for (var file in new List<File>.from(files)) {
-    if (!file.parent.existsSync()) {
-      print("ERROR: '${file.path}': No Such File or Directory.");
+    if (!(await file.parent.exists())) {
+      error("'${file.path}': No Such File or Directory.");
       files.remove(file);
     }
 
-    if (!file.existsSync()) {
-      file.createSync();
+    if (!(await file.exists())) {
+      await file.create();
     }
   }
 
   var outs = <RandomAccessFile>[];
 
   for (var file in files) {
-    outs.add(file.openSync(mode: opts["append"] ? FileMode.APPEND : FileMode.WRITE));
+    outs.add(await file.open(mode: opts["append"] ? FileMode.APPEND : FileMode.WRITE));
   }
 
-  stdin.listen((data) {
+  stdin.listen((data) async {
     for (var o in outs) {
-      o.writeFromSync(data);
+      await o.writeFrom(data);
     }
-  }).onDone(() {
+  }).onDone(() async {
     for (var o in outs) {
-      o.closeSync();
+      await o.close();
     }
   });
 }

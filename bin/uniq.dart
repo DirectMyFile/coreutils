@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var results = handleArguments(args, "cat", handle: (ArgParser parser) {
     parser.addFlag("count", abbr: "c", help: "Print the number of times each line occurred.");
     parser.addFlag("ignore-case", abbr: "i", help: "Ignore Case");
@@ -11,14 +11,13 @@ main(List<String> args) {
   }, fail: (result) => result.rest.length > 2);
 
   if (results["ignore-case"]) {
-    print("ERROR: Ignoring the casing of lines is not yet supported.");
-    exit(1);
+    error("Ignoring the casing of lines is not yet supported.");
   }
 
   File input = results.rest.length >= 1 ? new File(results.rest[0]) : new File("/dev/stdin");
   File of = results.rest.length == 2 ? new File(results.rest[0]) : new File("/dev/stdout");
 
-  var lines = input.readAsLinesSync();
+  var lines = await input.readAsLines();
 
   if (results["count"]) {
     var ol = new Map<String, int>();
@@ -42,10 +41,10 @@ main(List<String> args) {
       out = out.replaceAll("\n", "\0");
     }
 
-    of.writeAsStringSync(out);
+    await of.writeAsString(out);
   } else {
     lines = lines.where((it) => results["repeated"] ? lines.indexOf(it) != lines.lastIndexOf(it) : true).toSet();
     var d = results["zero-terminated"] ? "\u0000" : "\n";
-    of.writeAsStringSync(lines.join(d) + d);
+    await of.writeAsString(lines.join(d) + d);
   }
 }

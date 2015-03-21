@@ -3,21 +3,20 @@ import "dart:convert";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var opts = handleArguments(args, "head", usage: "<path>", handle: (ArgParser parser) {
     parser.addOption("lines", abbr: "n", defaultsTo: "10", help: "Read the specified number of lines of the file.");
   }, fail: (result) => result.rest.length > 1);
 
   var path = args.isEmpty ? "-" : args[0];
   var file = new File(path == "-" ? "/dev/stdin" : path);
-  var f = file.openSync(mode: FileMode.READ);
+  RandomAccessFile f = await file.open(mode: FileMode.READ);
 
   if (!opts.options.contains("bytes")) {
     var nl = int.parse(opts["lines"], onError: (src) => null);
 
     if (nl == null) {
-      print("Invalid Number Argument.");
-      exit(1);
+      error("Invalid Number Argument.");
     }
 
     var count = 1;
@@ -25,7 +24,7 @@ main(List<String> args) {
     var newline = UTF8.encode("\n").first;
 
     while (count <= nl) {
-      var b = f.readByteSync();
+      var b = await f.readByte();
 
       if (b == -1) {
         if (buff.isNotEmpty) {
@@ -44,16 +43,15 @@ main(List<String> args) {
       }
     }
 
-    f.closeSync();
+    await f.close();
   } else {
     var bl = int.parse(opts["bytes"], onError: (src) => null);
 
     if (bl == null) {
-      print("Invalid Number Argument.");
-      exit(1);
+      error("Invalid Number Argument.");
     }
 
-    stdout.add(f.readSync(bl));
-    f.closeSync();
+    stdout.add(await f.read(bl));
+    await f.close();
   }
 }

@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var result = handleArguments(args, "rmdir", usage: "<path>", handle: (parser) {
     parser.addFlag("parents", negatable: false, abbr: "p", help: "Delete Parent Directories");
   }, fail: (result) => result.rest.isEmpty);
@@ -12,31 +12,32 @@ main(List<String> args) {
   for (var path in result.rest) {
     var dir = new Directory(path);
 
-    if (!dir.existsSync()) {
-      print("ERROR: Directory '${path}' does not exist.");
-      exit(1);
+    if (!(await dir.exists())) {
+      error("Directory '${path}' does not exist.");
     } else {
       if (recursive) {
-        List<Directory> dirs = walkTreeBottomUp(dir).where((it) => it is Directory).toList();
+        List<Directory> dirs = (await walkTreeBottomUp(dir)).where((it) => it is Directory).toList();
 
         for (Directory d in dirs) {
           if (d.listSync().any((it) => it is! Directory)) {
-            print("ERROR: Directory '${d.path}' is not empty.");
+            error("Directory '${d.path}' is not empty.");
           } else {
-            d.deleteSync();
+            await d.delete();
           }
         }
 
-        if (dir.listSync().any((it) => it is! Directory)) {
-          print("ERROR: Directory '${dir.path}' is not empty.");
+        var children = await dir.list().toList();
+        if (children.any((it) => it is! Directory)) {
+          error("Directory '${dir.path}' is not empty.");
         } else {
-          dir.deleteSync();
+          await dir.delete();
         }
       } else {
-        if (dir.listSync().isNotEmpty) {
-          print("ERROR: Directory '${dir.path}' is not empty.");
+        var children = await dir.list().toList();
+        if (children.isNotEmpty) {
+          error("Directory '${dir.path}' is not empty.");
         } else {
-          dir.deleteSync();
+          await dir.delete();
         }
       }
     }

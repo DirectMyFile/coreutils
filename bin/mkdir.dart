@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var result = handleArguments(args, "mkdir", usage: "<path>", handle: (parser) {
     parser.addFlag("parents", negatable: false, abbr: "p", help: "Create Parent Directories");
   }, fail: (result) => result.rest.isEmpty);
@@ -12,11 +12,10 @@ main(List<String> args) {
   for (var path in result.rest) {
     var dir = new Directory(path);
 
-    if (dir.existsSync()) {
-      print("ERROR: Directory '${path}' already exists.");
-      exit(1);
+    if (await dir.exists()) {
+      error("Directory '${path}' already exists.");
     } else {
-      dir.createSync(recursive: recursive);
+      await dir.create(recursive: recursive);
     }
   }
 }

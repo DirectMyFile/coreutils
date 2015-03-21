@@ -10,7 +10,6 @@ main(List<String> args) {
   try {
     Process.killPid(SystemCalls.getParentProcessId());
   } on FormatException catch (e) {
-    print("ERROR: Invalid Exit Code -> Not An Integer");
-    exit(1);
+    error("Invalid Exit Code -> Not An Integer");
   }
 }

@@ -1,8 +1,8 @@
-import "dart:io";
+import "dart:async";
 
 import "package:coreutils/coreutils.dart";
 
-main(List<String> args) {
+main(List<String> args) async {
   var result = handleArguments(args, "sleep", usage: "<time>", fail: (result) => result.rest.length != 1);
   var tstr = result.rest[0];
 
@@ -23,9 +23,8 @@ main(List<String> args) {
     var f = int.parse(tstr);
 
     var seconds = f * unit;
-    sleep(new Duration(seconds: seconds));
+    await new Future.delayed(new Duration(seconds: seconds));
   } on FormatException catch (e) {
-    print("Invalid Time");
-    exit(1);
+    error("Invalid Time");
   }
 }
