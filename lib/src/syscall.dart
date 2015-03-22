@@ -88,6 +88,15 @@ class SystemCalls {
       """;
     } else {
       header += """
+      typedef unsigned int suseconds_t;
+
+      int sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void *newp, size_t newlen);
+
+      struct timeval {
+        time_t tv_sec;
+        suseconds_t tv_usec;
+      };
+
       struct passwd {
         char *pw_name;
         char *pw_passwd;
@@ -164,6 +173,59 @@ class SystemCalls {
     return c.value.map((double it) => it);
   }
 
+  static void addStruct(String name, Map<String, String> members) {
+    var x = "struct ${name} {\n";
+    for (var k in members.keys) {
+      x += "${members[k]} ${k};\n";
+    }
+    x += "};";
+    libc.declare(x);
+  }
+
+  static dynamic getSysCtlValue(String name, [String type = "char[]"]) {
+    var len = types["size_t"].alloc();
+    var n = typeHelper.allocString(name);
+
+    libc.invokeEx("sysctlbyname", [n, types["void*"].nullPtr, len, types["void*"].nullPtr, 0]);
+
+    if (type.endsWith("[]")) {
+      type = type.substring(0, type.length - 2) + "[${len.value}]";
+    }
+
+    var t = types[type];
+    var v = t.alloc();
+
+    libc.invokeEx("sysctlbyname", [n, v, len, types["void*"].nullPtr, 0]);
+
+    return readValue(v);
+  }
+
+  static dynamic readValue(data) {
+    if (data is! BinaryData) {
+      return data;
+    }
+
+    if (data.isNullPtr) {
+      return null;
+    }
+
+    if (data.type.name.startsWith("char") && data.type.name != "char") {
+      return readNativeString(data);
+    } else {
+      var v = data.value;
+      if (v is List) {
+        v = v.map(readValue).toList();
+      } else if (v is Map) {
+        var out = {};
+        for (var k in v.keys) {
+          out[k] = readValue(v[k]);
+        }
+        return out;
+      }
+      return v;
+    }
+  }
+
   static List<String> getEnvironment() {
     BinaryData data = types["char**"].extern(libc.symbol("environ"));
     var x = [];
@@ -188,6 +250,16 @@ class SystemCalls {
       var match = new RegExp(r"sec \= (\d+)").firstMatch(out);
       return (new DateTime.now().millisecondsSinceEpoch ~/ 1000) - int.parse(match[1]);
     }
+  }
+
+  static DateTime getStartupTime() {
+    var st = new DateTime.now().subtract(getUptimeDuration());
+    st = new DateTime.fromMillisecondsSinceEpoch(st.millisecondsSinceEpoch - st.millisecond);
+    return st;
+  }
+
+  static Duration getUptimeDuration() {
+    return new Duration(seconds: getUptime());
   }
 
   static BinaryData getSysInfo() {
@@ -298,7 +370,14 @@ class SystemCalls {
       return typeHelper.readString(x);
     }
   }
-
-  static BinaryData alloc(String type, [value]) => types[type].alloc(value);
 }
 
+BinaryData alloc(String type, [value]) => SystemCalls.types[type].alloc(value);
+String readNativeString(BinaryData input) {
+  if (input.type.toString() == "char **") {
+    input = input.value;
+  }
+
+  return SystemCalls.typeHelper.readString(input);
+}
+BinaryData toNativeString(String input) => SystemCalls.typeHelper.allocString(input);

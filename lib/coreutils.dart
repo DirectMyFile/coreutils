@@ -10,6 +10,7 @@ import "package:crypto/crypto.dart";
 import "package:binary_interop/binary_interop.dart";
 
 export "package:args/args.dart";
+export "package:binary_types/binary_types.dart";
 
 part "src/syscall.dart";
 part "src/format.dart";
