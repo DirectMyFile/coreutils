@@ -25,6 +25,7 @@ class SystemCalls {
 
     int errno;
 
+    pid_t getpid(void);
     pid_t getppid(void);
     pid_t getpgrp(void);
     int setpgid(pid_t pid, pid_t pgid);
@@ -141,7 +142,7 @@ class SystemCalls {
   }
 
   static int getProcessGroupId() {
-    return libc.invokeEx("getpgid");
+    return libc.invokeEx("getpgid", [getProcessId()]);
   }
 
   static void setProcessGroupId(int id) {
@@ -150,6 +151,10 @@ class SystemCalls {
     if (result == -1) {
       throw new Exception("Failed to set pgid!");
     }
+  }
+
+  static int getProcessId() {
+    return libc.invokeEx("getpid");
   }
 
   static String getUserName() {
@@ -170,7 +175,7 @@ class SystemCalls {
     if (result == -1) {
       throw new Exception("Failed to get load average.");
     }
-    return c.value.map((double it) => it);
+    return c.value.map((double it) => it).toList();
   }
 
   static void addStruct(String name, Map<String, String> members) {
@@ -209,21 +214,22 @@ class SystemCalls {
       return null;
     }
 
-    if (data.type.name.startsWith("char") && data.type.name != "char") {
+    try {
       return readNativeString(data);
-    } else {
-      var v = data.value;
-      if (v is List) {
-        v = v.map(readValue).toList();
-      } else if (v is Map) {
-        var out = {};
-        for (var k in v.keys) {
-          out[k] = readValue(v[k]);
-        }
-        return out;
-      }
-      return v;
+    } catch (e) {
     }
+
+    var v = data.value;
+    if (v is List) {
+      v = v.map(readValue).toList();
+    } else if (v is Map) {
+      var out = {};
+      for (var k in v.keys) {
+        out[k] = readValue(v[k]);
+      }
+      return out;
+    }
+    return v;
   }
 
   static List<String> getEnvironment() {
@@ -246,9 +252,7 @@ class SystemCalls {
     if (Platform.isLinux || Platform.isAndroid) {
       return getSysInfo().value["uptime"];
     } else {
-      var out = Process.runSync("sysctl", ["-n", "kern.boottime"]).stdout;
-      var match = new RegExp(r"sec \= (\d+)").firstMatch(out);
-      return (new DateTime.now().millisecondsSinceEpoch ~/ 1000) - int.parse(match[1]);
+      return (new DateTime.now().millisecondsSinceEpoch ~/ 1000) - getSysCtlValue("kern.boottime", "struct timeval")["tv_sec"];
     }
   }
 
@@ -285,6 +289,10 @@ class SystemCalls {
 
   static int getUserId() {
     return libc.invokeEx("getuid");
+  }
+
+  static int getEffectiveUserId() {
+    return libc.invokeEx("geteuid");
   }
 
   static int getGroupId() {
@@ -373,11 +381,9 @@ class SystemCalls {
 }
 
 BinaryData alloc(String type, [value]) => SystemCalls.types[type].alloc(value);
-String readNativeString(BinaryData input) {
-  if (input.type.toString() == "char **") {
-    input = input.value;
-  }
 
+String readNativeString(BinaryData input) {
   return SystemCalls.typeHelper.readString(input);
 }
+
 BinaryData toNativeString(String input) => SystemCalls.typeHelper.allocString(input);
