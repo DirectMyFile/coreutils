@@ -18,6 +18,7 @@ class SystemCalls {
     libc = DynamicLibrary.load(_getLibName(), types: types);
 
     var header = """
+    typedef unsigned int mode_t;
     typedef unsigned int pid_t;
     typedef unsigned int uid_t;
     typedef unsigned int gid_t;
@@ -67,6 +68,7 @@ class SystemCalls {
     char *ttyname(int fd);
     int getgrouplist(const char *user, gid_t group, gid_t *groups, int *ngroups);
     struct passwd *getpwnam(const char *name);
+    int chmod(const char *path, mode_t mode)
     """;
 
     if (Platform.isLinux || Platform.isAndroid) {

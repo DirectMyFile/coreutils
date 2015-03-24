@@ -17,7 +17,77 @@ Future<List<FileSystemEntity>> walkTreeBottomUp(Directory dir) async {
 }
 
 enum FileSizeUnit {
-BYTES, KILOBYTES, MEGABYTES, GIGABYTES, TERABYTES
+  BYTES, KILOBYTES, MEGABYTES, GIGABYTES, TERABYTES
+}
+
+int parseFileMode(String input) {
+  var WHO = new RegExp(r"(a|u|g|o)");
+  var PERM = new RegExp(r"(r|s|t|w|x|X|u|g|o)");
+  var OP = new RegExp(r"(\+|\-|\=)");
+  var ACTION = new RegExp("(${OP.pattern})(${PERM.pattern})+");
+
+  var s = new StringScanner(input);
+
+  String parseWho() {
+    return s.lastMatch[1];
+  }
+
+  String parseOp([bool sb = false]) {
+    if (!sb) {
+      s.expect(OP);
+    }
+
+    return s.lastMatch[1];
+  }
+
+  List<String> parsePerms() {
+    var out = [];
+    while (s.scan(PERM)) {
+      out.add(s.lastMatch[1]);
+    }
+    return out;
+  }
+
+  List<dynamic> parseAction([bool sb = false]) {
+    return [parseOp(sb), parsePerms()];
+  }
+
+  List<dynamic> parseClause() {
+    var whos = [];
+    var actions = [];
+
+    while (s.scan(WHO)) {
+      whos.add(parseWho());
+    }
+
+    actions.add(parseAction());
+
+    while (s.scan(ACTION)) {
+      actions.add(parseAction(true));
+    }
+
+    return [
+      whos,
+      actions
+    ];
+  }
+
+  List<dynamic> parseClauses() {
+    var c = [];
+
+    c.add(parseClause());
+
+    while (s.scan(",")) {
+      c.add(parseClause());
+    }
+
+    return c;
+  }
+
+  var clauses = parseClauses();
+  s.expectDone();
+  print(clauses);
+  return 0;
 }
 
 int toFileSizeBytes(int input, FileSizeUnit unit) {
