@@ -45,7 +45,7 @@ ArgResults handleArguments(List<String> args, String tool, {bool fail(ArgResults
 }
 
 void init() {
-  SystemCalls.init();
+  LibraryManager.init();
 }
 
 void error(String msg, {bool exit: true, int exitCode: 1}) {

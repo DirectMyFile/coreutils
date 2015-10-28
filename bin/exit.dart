@@ -8,8 +8,8 @@ main(List<String> args) {
   var opts = handleArguments(args, "exit");
 
   try {
-    Process.killPid(SystemCalls.getParentProcessId());
-  } on FormatException catch (e) {
+    Process.killPid(getParentProcessId());
+  } on FormatException {
     error("Invalid Exit Code -> Not An Integer");
   }
 }

@@ -1,5 +1,6 @@
 part of coreutils;
 
+/*
 class ErrorNumbers {
   static const int EPERM = 1;
   static const int ENOENT = 2;
@@ -389,3 +390,4 @@ String readNativeString(BinaryData input) {
 }
 
 BinaryData toNativeString(String input) => SystemCalls.typeHelper.allocString(input);
+*/

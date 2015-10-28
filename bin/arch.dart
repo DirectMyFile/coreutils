@@ -1,12 +1,9 @@
 import "package:coreutils/coreutils.dart";
-import "package:system_info/system_info.dart";
 
 main(List<String> args) {
   handleArguments(args, "arch");
 
-  print(getSystemArch());
-}
+  var u = getKernelInfo();
 
-String getSystemArch() {
-  return SysInfo.kernelArchitecture;
+  print(u.machine);
 }

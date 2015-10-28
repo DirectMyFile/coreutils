@@ -5,5 +5,5 @@ main(List<String> args) {
 
   handleArguments(args, "whoami", fail: (result) => result.rest.isNotEmpty);
 
-  print(SystemCalls.getUserName());
+  print(getCurrentUser().name);
 }

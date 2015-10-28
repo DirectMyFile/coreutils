@@ -5,5 +5,5 @@ main(List<String> args) async {
 
   handleArguments(args, "logname", fail: (result) => result.rest.isNotEmpty);
 
-  print(SystemCalls.getUserName());
+  print(getCurrentUsername());
 }

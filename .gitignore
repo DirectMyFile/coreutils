@@ -13,3 +13,4 @@ out/
 .c9*
 snapshots/
 scripts/
+.packages

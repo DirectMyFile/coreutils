@@ -24,7 +24,7 @@ main(List<String> args) async {
 
     var seconds = f * unit;
     await new Future.delayed(new Duration(seconds: seconds));
-  } on FormatException catch (e) {
+  } on FormatException {
     error("Invalid Time");
   }
 }

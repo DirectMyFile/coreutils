@@ -10,7 +10,7 @@ main(List<String> args) {
     parser.addFlag("quiet", help: "Silence", negatable: false, hide: true);
   });
 
-  var name = SystemCalls.getTtyName();
+  var name = getTtyName();
 
   if (name == null) {
     if (!opts["silent"] && !opts["quiet"]) {

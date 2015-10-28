@@ -5,5 +5,5 @@ main(List<String> args) {
 
   handleArguments(args, "sync");
 
-  SystemCalls.sync();
+  sync();
 }

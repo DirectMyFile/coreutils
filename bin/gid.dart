@@ -9,23 +9,23 @@ main(List<String> args) {
     parser.addFlag("groups", abbr: "G", help: "Display Group Ids");
   }, fail: (x) => x.rest.length > 1);
 
-  var user = opts.rest.isEmpty ? SystemCalls.getUserName() : opts.rest[0];
+  var user = opts.rest.isEmpty ? getCurrentUsername() : opts.rest[0];
 
   try {
-    SystemCalls.getPasswordFileEntry(user);
+    getPasswordFileEntry(user);
   } catch (e) {
     error("Unknown User: ${user}");
   }
 
   if (opts["groups"]) {
-    print(SystemCalls.getUserGroups(user).join(" "));
+    print(getUserGroups(user).join(" "));
   } else {
-    var mg = SystemCalls.getPasswordFileEntry(user);
+    var mg = getPasswordFileEntry(user);
     var n = mg["gid"];
     var l = "uid=${mg["uid"]}(${mg["name"]})";
-    var m = "gid=${n}(${SystemCalls.getGroupNameForId(n)})";
-    var others = SystemCalls.getUserGroups(user)
-      .map((it) => "${it}(${SystemCalls.getGroupNameForId(it)})")
+    var m = "gid=${n}(${getGroupInfo(n).name})";
+    var others = getUserGroups(user)
+      .map((it) => "${it}(${getGroupInfo(it).name})")
       .join(",");
 
     print("${l} ${m} groups=${others}");

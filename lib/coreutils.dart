@@ -7,12 +7,12 @@ import "dart:io" as io;
 import "package:args/args.dart";
 import "package:crypto/crypto.dart";
 
-import "package:binary_interop/binary_interop.dart";
+import "package:syscall/syscall.dart";
 
 import "package:string_scanner/string_scanner.dart";
 
 export "package:args/args.dart";
-export "package:binary_types/binary_types.dart";
+export "package:syscall/syscall.dart";
 
 part "src/syscall.dart";
 part "src/format.dart";
